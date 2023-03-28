@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/javitxu13/Servers#readme",
   "dependencies": {
+    "botkit": "^4.15.0",
     "express": "^4.18.2",
-    "mysql2": "^3.2.0"
+    "mysql2": "^3.2.0",
+    "sequelize": "^6.30.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
