@@ -1,7 +1,7 @@
 import connection from "../config/db.js";
 
 const getAll = (req,res) => {
-    let sql = "SELECT player.idplayer,player.name,player.last_name,player.age,team.name as team\
+    let sql = "SELECT player.idplayer,player.name,player.last_name,player.age,team.idteam as team\
     FROM player\
     LEFT JOIN team ON player.idteam = team.idteam\
     ";
@@ -51,7 +51,6 @@ const create = (req,res) => {
     });
 
 }
-
 const deletes = (req,res) => {
     let idplayer = req.params.id;
     let sql = "DELETE FROM  player WHERE idplayer=?";
@@ -59,13 +58,7 @@ const deletes = (req,res) => {
         if (err) throw err;
         res.send(result);
     });
-
-
-
 }
-
-
-
 
 export default {
     getAll,

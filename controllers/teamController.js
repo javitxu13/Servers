@@ -1,9 +1,9 @@
 import connection from "../config/db.js";
 
 const getAll = (req,res) => {
-    let sql = "SELECT player.idplayer,player.name,player.last_name,player.age,team.name as team\
-    FROM player\
-    LEFT JOIN team ON player.idteam = team.idteam\
+    let sql = "SELECT team.idteam,team.name,team.creation_date,team.idcaptain,team.idstadium as stadium\
+    FROM team\
+    LEFT JOIN stadium ON team.idstadium = stadium.idstadium\
     ";
     connection.query(sql,(err,result) => {
         if (err) throw err;
@@ -12,9 +12,9 @@ const getAll = (req,res) => {
 };
 
 const getByid = (req,res) => {
-    let sql = "SELECT player.idplayer,player.name,player.last_name,player.age,team.name as team\
-    FROM player\
-    LEFT JOIN team ON player.idteam = team.idteam\
+    let sql = "SELECT team.idteam,team.name,team.creation_date,team.idcaptain,team.idstadium as stadium\
+    FROM team\
+    LEFT JOIN stadium ON team.idstadium = stadium.idstadium\
     ";
     connection.query(sql,[req.params.id], (err,result) => {
         if (err) throw err;
@@ -23,13 +23,15 @@ const getByid = (req,res) => {
 }
 
 const create = (req,res) => {
-    let name = req.body.name;
-    let last_name = req.body.last_name;
-    let age = req.body.age;
     let idteam = req.body.idteam;
-    let sql = "INSERT INTO player (name,last_name,age,idteam)\
+    let name = req.body.name;
+    let creation_date = req.body.creation_date;
+    let idcaptain = req.body.idcaptain;
+    let idstadium = req.body.idstadium;
+   
+    let sql = "INSERT INTO team (idteam,name,creation_date,idcaptain,idstadium)\
     VALUES (?,?,?,?)";
-    connection.query(sql,[name,last_name,age,idteam], (err,result) => {
+    connection.query(sql,[idteam,name,creation_date,idcaptain,idstadium], (err,result) => {
         if (err) throw err;
         res.send(result);
     });
@@ -37,15 +39,15 @@ const create = (req,res) => {
 }
 
     const update = (req,res) => {
-    let name = req.body.name;
-    let last_name = req.body.last_name;
-    let age = req.body.age;
-    let idteam = req.body.idteam;
-    let idplayer =req.body.idplayer;
+        let idteam = req.body.idteam;
+        let name = req.body.name;
+        let creation_date = req.body.creation_date;
+        let idcaptain = req.body.idcaptain;
+        let idstadium = req.body.idstadium;
     let sql = "UPDATE player\
-    SET name=?,last_name=?,age =?,idteam =?\
-    WHERE idplayer=?";
-    connection.query(sql,[name,last_name,age,idteam,idplayer], (err,result) => {
+    SET idteam=?,name=?,creation_date=?,idcapatain =?\
+    WHERE idstadium=?";
+    connection.query(sql,[idteam,name,creation_date,idcaptain,idstadium], (err,result) => {
         if (err) throw err;
         res.send(result);
     });
@@ -53,9 +55,9 @@ const create = (req,res) => {
 }
 
 const deletes = (req,res) => {
-    let idplayer = req.params.id;
-    let sql = "DELETE FROM  player WHERE idplayer=?";
-    connection.query(sql,[idplayer], (err,result) => {
+    let idteam = req.params.id;
+    let sql = "DELETE FROM  team WHERE idteam=?";
+    connection.query(sql,[idteam], (err,result) => {
         if (err) throw err;
         res.send(result);
     });

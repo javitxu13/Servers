@@ -55,7 +55,7 @@ const create = (req,res) => {
 const deletes = (req,res) => {
     let idgame = req.params.id;
     let sql = "DELETE FROM  game WHERE idgame=?";
-    connection.query(sql,[idplayer], (err,result) => {
+    connection.query(sql,[idgame], (err,result) => {
         if (err) throw err;
         res.send(result);
     });
