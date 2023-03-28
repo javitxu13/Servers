@@ -1,71 +1,129 @@
-import connection from "../config/db.js";
+import Game from "../models/game.js";
+import Team from "../models/team.js";
+import Stadium from "../models/stadium.js";
 
-const getAll = (req,res) => {
-    let sql = "SELECT stadium.idstadium,stadium.name,stadium.adress,stadium.capacity\
-    FROM Stadium\
-    LEFT JOIN game ON stadium.idstadium = game.idstadium\
-    ";
-    connection.query(sql,(err,result) => {
-        if (err) throw err;
-        res.send(result);
+
+const getAll = async (req, res) => {
+  try {
+    let stadiums = await Stadium.findAll({
+      attributes: ["idstadium", "name", "address", "capacity"],
+      include: [
+        {
+          model: Team,
+          attributes: ["name", "idteam"],
+          as: "team",
+        },
+        {
+          model: Game,
+          attributes: ["name", "idgame"],
+          as: "game",
+        },
+      ],
     });
+    res.send(stadiums);
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || "Error",
+    });
+  }
 };
 
-const getByid = (req,res) => {
-    let sql = "SELECT stadium.idstadium,stadium.name,stadium.adress,stadium.capacity\
-    FROM Stadium\
-    LEFT JOIN game ON stadium.idstadium = game.idstadium\
-    ";
-    connection.query(sql,[req.params.id], (err,result) => {
-        if (err) throw err;
-        res.send(result);
+const getById = async (req, res) => {
+  try {
+    let id = req.params.id;
+    let stadium = await Stadium.findByPk(id, {
+      attributes: ["idstadium", "name", "address", "capacity"],
+      include: [
+        {
+          model: Team,
+          attributes: ["name", "idteam"],
+          as: "team",
+        },
+        {
+          model: Game,
+          attributes: ["name", "idgame"],
+          as: "game",
+        },
+      ],
     });
-}
+    if (!stadium) {
+      res.status(404).send({
+        message: `Cannot find stadium with id= ${id}`,
+      });
+    } else {
+      res.send(stadium);
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || "Some error occurred while retrieving stadiums",
+    });
+  }
+};
 
-const create = (req,res) => {
-    let idstadium = req.body.idstadium;
+const create = async (req, res) => {
+  try {
     let name = req.body.name;
-    let adress = req.body.adress;
-    let capacity = req.body.adress;
-    let sql = "INSERT INTO stadium (idstadium,name,adress,capacity)\
-    VALUES (?,?,?,?)";
-    connection.query(sql,[idstadium,name,adress,capacity], (err,result) => {
-        if (err) throw err;
-        res.send(result);
+    let address = req.body.address;
+    let capacity = req.body.capacity;
+    let stadium = await Stadium.create({
+      name: name,
+      address: address,
+      capacity: capacity,
     });
+    res.send(stadium);
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || "Some error occurred while creating a stadium",
+    });
+  }
+};
 
-}
-
-    const update = (req,res) => {
-        let idstadium = req.body.idstadium;
-        let name = req.body.name;
-        let adress = req.body.adress;
-        let capacity = req.body.adress;
-        let sql = "INSERT INTO stadium (idstadium,name,adress,capacity)\
-        VALUES (?,?,?,?)";
-        connection.query(sql,[idstadium,name,adress,capacity], (err,result) => {
-            if (err) throw err;
-            res.send(result);
-        });
-    
-}
-
-const deletes = (req,res) => {
+const update = async (req, res) => {
+  try {
     let idstadium = req.params.id;
-    let sql = "DELETE FROM  stadium WHERE idstadium=?";
-    connection.query(sql,[idstadium], (err,result) => {
-        if (err) throw err;
-        res.send(result);
+    let name = req.body.name;
+    let address = req.body.address;
+    let capacity = req.body.capacity;
+    let stadium = await Stadium.findByPk(idstadium);
+    if (!stadium) {
+      res.status(404).send({
+        message: `Cannot find stadium with id= ${idstadium}`,
+      });
+    } else {
+      await stadium.update({
+        name: name,
+        address: address,
+        capacity: capacity,
+      });
+      res.send(stadium);
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || "Some error occurred while updating a stadium",
     });
+  }
+};
 
-
-
-}
+const deletes = async (req, res) => {
+  try {
+    let idstadium = req.params.id;
+    let stadium = await Stadium.destroy({
+      where: {
+        idstadium: idstadium,
+      },
+    });
+    res.send("Stadium deleted");
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || "Some error occurred while deleting a stadium",
+    });
+  }
+};
 
 export default {
-    getAll,
-    getByid,
-    create,
-    update,
-    deletes
-}
+  getAll,
+  getById,
+  create,
+  update,
+  deletes,
+};
