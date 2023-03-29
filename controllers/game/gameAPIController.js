@@ -1,6 +1,6 @@
-import Game from "../models/player.js";
-import Stadium from "../models/team.js";
-import Tournament from "../models/tournament.js";
+import Game from "../../models/player.js";
+import Stadium from "../../models/team.js";
+import Tournament from "../../models/tournament.js";
 
 
 const getAll = async (req,res) =>{

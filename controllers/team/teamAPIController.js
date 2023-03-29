@@ -1,5 +1,5 @@
-import Player from "../models/player.js";
-import Team from "../models/team.js";
+import Player from "../../models/player.js";
+import Team from "../../models/team.js";
 
 const getAll = async (req, res) => {
   try {
